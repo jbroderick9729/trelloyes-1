@@ -12,7 +12,6 @@ const newRandomCard = () => {
     content: 'lorem ipsum',
   }
 }
-
 class App extends Component {
   static defaultProps = {
     store: {
@@ -26,23 +25,37 @@ class App extends Component {
 
   }
 
-  handleDeleteItem() {
-    console.log('clicked delete');
+  handleDeleteItem = (card) => {
+    console.log('Card ID', card);
+    const {lists, allCards} = this.state.store;
+
+    const newList = lists.map(list => {
+      list.cardIds = list.cardIds.filter(id => id !== card);
+      return list;
+    });
+
+    delete allCards[card];
+
+    this.setState({
+      store: {
+        allCards,
+        lists: newList
+      }
+    })
   }
 
-  handleAddCard = (id) => {
-    console.log('id', id);
+  handleAddCard = (listId) => {
+    // console.log('id', listId);
     const randomCardInfo = newRandomCard()
-          
-    // let something = this.state.store.lists.map(item => {
-    //   if (item.id === id) {
-    //     console.log('item.id',item.id);
-    //     console.log(item.cardIds);
+    // console.log('randomCardInfo ID', randomCardInfo.id)
 
-    //       [item.cardIds]: [...item.carIds, [randomCardInfo.id]]
-    //   }
+    const newList = this.state.store.lists.map(list => {
+      if (list.id === listId) {
+        list.cardIds.push(randomCardInfo.id);
+      }
+      return list;
+    })
 
-    // })
   
     this.setState({
       store: {
@@ -50,14 +63,12 @@ class App extends Component {
           ...this.state.store.allCards,
           [randomCardInfo.id]: randomCardInfo
         },
-        lists: something
+        lists: newList 
       }
     })
-       
   }
   
   render() {
-        
     return (
       <main className='App'>
         <header className='App-header'>
